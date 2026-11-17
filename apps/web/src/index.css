@@ -1,0 +1,477 @@
+@import "tailwindcss";
+@import "@fontsource-variable/atkinson-hyperlegible-next";
+@import "@fontsource-variable/atkinson-hyperlegible-mono";
+
+/* Design tokens (docs/spec/ui.md). Colour means status and nothing else. */
+:root {
+  --canvas: #eef1f0;
+  --surface: #fbfcfb;
+  --ink: #17232b;
+  --ink-muted: #51616b;
+  --line: #cbd3d1;
+  --exact: #0b6e78;
+  --check: #9a5b00;
+  --blocked: #a8214f;
+  --note: #3d5878;
+  --exact-wash: rgb(11 110 120 / 0.1);
+  --check-wash: rgb(154 91 0 / 0.12);
+  --blocked-wash: rgb(168 33 79 / 0.1);
+  --active-line: rgb(11 110 120 / 0.08);
+  --code-string: #7a3e00;
+  --code-number: #8a2a6a;
+  --code-command: #0b5b63;
+  --code-function: #2f4f87;
+  --code-comment: #6b7a82;
+  --font-ui: "Atkinson Hyperlegible Next Variable", system-ui, sans-serif;
+  --font-code: "Atkinson Hyperlegible Mono Variable", ui-monospace, monospace;
+  --code-size: 14px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --canvas: #1a2227;
+    --surface: #222c32;
+    --ink: #e6ecea;
+    --ink-muted: #9daab0;
+    --line: #37444b;
+    --exact: #4fb8c2;
+    --check: #e0a64a;
+    --blocked: #f07a9e;
+    --note: #8fb0d6;
+    --exact-wash: rgb(79 184 194 / 0.14);
+    --check-wash: rgb(224 166 74 / 0.14);
+    --blocked-wash: rgb(240 122 158 / 0.14);
+    --active-line: rgb(79 184 194 / 0.12);
+    --code-string: #e9b77a;
+    --code-number: #e7a1d1;
+    --code-command: #6fd0d9;
+    --code-function: #a9c3f0;
+    --code-comment: #8796a0;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --canvas: #1a2227;
+  --surface: #222c32;
+  --ink: #e6ecea;
+  --ink-muted: #9daab0;
+  --line: #37444b;
+  --exact: #4fb8c2;
+  --check: #e0a64a;
+  --blocked: #f07a9e;
+  --note: #8fb0d6;
+  --exact-wash: rgb(79 184 194 / 0.14);
+  --check-wash: rgb(224 166 74 / 0.14);
+  --blocked-wash: rgb(240 122 158 / 0.14);
+  --active-line: rgb(79 184 194 / 0.12);
+  --code-string: #e9b77a;
+  --code-number: #e7a1d1;
+  --code-command: #6fd0d9;
+  --code-function: #a9c3f0;
+  --code-comment: #8796a0;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--ink-muted);
+  --color-line: var(--line);
+  --color-exact: var(--exact);
+  --color-check: var(--check);
+  --color-blocked: var(--blocked);
+  --color-note: var(--note);
+  --font-ui: var(--font-ui);
+  --font-code: var(--font-code);
+  --text-xs: 13px;
+  --text-sm: 14px;
+  --text-base: 15px;
+  --text-lg: 18px;
+  --text-xl: 24px;
+  --radius-control: 6px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--exact);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--exact-wash);
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* Shared control look: 6 px radius, 1 px line, no shadow. */
+.control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.control:hover:not(:disabled) {
+  border-color: var(--ink-muted);
+}
+.control.primary {
+  background: var(--exact);
+  border-color: var(--exact);
+  color: var(--surface);
+}
+.control.quiet {
+  border-color: transparent;
+  background: transparent;
+}
+a.control {
+  text-decoration: none;
+}
+.icon-button {
+  justify-content: center;
+  min-width: 32px;
+  padding: 0;
+}
+@media (pointer: coarse) {
+  .control {
+    min-height: 44px;
+  }
+  .icon-button {
+    min-width: 44px;
+  }
+}
+
+/*
+ * Header: the name with one sentence under it, the views, three controls. Phone: name and controls,
+ * the sentence, then the views on one row that scrolls sideways when it does not fit.
+ * index.html repeats this markup as the static shell.
+ */
+.app-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "name tools"
+    "line line"
+    "nav nav";
+  align-items: center;
+  column-gap: 12px;
+  padding: 6px 16px 4px;
+  border-bottom: 1px solid var(--line);
+  background: var(--canvas);
+}
+.app-name {
+  grid-area: name;
+  margin: 0;
+  font-family: var(--font-code);
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.app-line {
+  grid-area: line;
+  margin: 0 0 4px;
+  color: var(--ink-muted);
+  font-size: 13px;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+.app-nav {
+  grid-area: nav;
+  display: flex;
+  gap: 2px;
+  margin: 0 -16px;
+  padding: 0 16px 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.app-nav .nav-link {
+  flex: none;
+  padding: 0 7px;
+  font-size: 13px;
+}
+.app-tools {
+  grid-area: tools;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.app-tools .control.quiet {
+  padding: 0 8px;
+}
+.app-tools .icon-button {
+  padding: 0;
+}
+@media (min-width: 900px) {
+  .app-header {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "name nav tools"
+      "line nav tools";
+    column-gap: 24px;
+    padding: 6px 16px;
+  }
+  .app-name {
+    align-self: end;
+  }
+  .app-line {
+    align-self: start;
+    max-width: 15rem;
+    margin: 0;
+  }
+  .app-nav {
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+  .app-nav .nav-link {
+    padding: 0 12px;
+    font-size: 14px;
+  }
+}
+@media (min-width: 1280px) {
+  .app-line {
+    max-width: none;
+  }
+}
+
+.link {
+  color: var(--exact);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* The one line about the mapping, in the notes header above the notes. */
+.mapping-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  margin: 0;
+  font-size: 14px;
+}
+@media (min-width: 600px) {
+  .mapping-line {
+    margin-left: 4px;
+    padding-left: 16px;
+    border-left: 1px solid var(--line);
+  }
+}
+
+/* The skip link: hidden until it has focus. */
+.skip-link {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+  transform: translateY(-200%);
+}
+.skip-link:focus {
+  transform: none;
+}
+main:focus {
+  outline: none;
+}
+
+.field {
+  min-height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+}
+
+/* Status marks: shape + colour, always with a word nearby. */
+.mark-exact {
+  color: var(--exact);
+}
+.mark-check {
+  color: var(--check);
+}
+.mark-untranslated,
+.mark-error {
+  color: var(--blocked);
+}
+.mark-info {
+  color: var(--note);
+}
+
+/* CodeMirror */
+.cm-editor {
+  height: 100%;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--code-size);
+}
+.cm-editor.cm-focused {
+  outline: none;
+}
+.cm-scroller {
+  font-family: var(--font-code) !important;
+  line-height: 1.55 !important;
+}
+.cm-gutters {
+  background: var(--surface) !important;
+  color: var(--ink-muted) !important;
+  border-right: 1px solid var(--line) !important;
+}
+.cm-activeLine,
+.cm-activeLineGutter {
+  background: transparent !important;
+}
+.cm-cursor {
+  border-left-color: var(--ink) !important;
+}
+.cm-selectionBackground,
+.cm-focused .cm-selectionBackground {
+  background: var(--exact-wash) !important;
+}
+.cm-placeholder {
+  color: var(--ink-muted) !important;
+}
+.tok-command {
+  color: var(--code-command);
+  font-weight: 700;
+}
+.tok-keyword {
+  color: var(--code-command);
+}
+.tok-function {
+  color: var(--code-function);
+}
+.tok-string {
+  color: var(--code-string);
+}
+.tok-number,
+.tok-duration {
+  color: var(--code-number);
+}
+.tok-comment {
+  color: var(--code-comment);
+  font-style: italic;
+}
+.tok-pipe,
+.tok-operator {
+  color: var(--ink-muted);
+}
+.tok-macro {
+  color: var(--note);
+}
+.tok-option {
+  color: var(--note);
+}
+.cm-stage-active {
+  background: var(--active-line);
+}
+.cm-diag-error {
+  text-decoration: underline wavy var(--blocked);
+  text-underline-offset: 3px;
+}
+.cm-diag-warning {
+  text-decoration: underline wavy var(--check);
+  text-underline-offset: 3px;
+}
+.cm-stage-marker {
+  display: inline-block;
+  width: 14px;
+  text-align: center;
+  font-size: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Dashboards: the converted layout on Dynatrace's 24-column grid, and code shown outside an editor. */
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(24, minmax(0, 1fr));
+  grid-auto-rows: 20px;
+  gap: 4px;
+  margin-left: 0;
+  padding: 8px;
+  list-style: none;
+  background: var(--canvas);
+  border: 1px solid var(--line);
+}
+.tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0 8px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.35;
+  text-align: left;
+}
+.tile:hover {
+  border-color: var(--ink-muted);
+}
+.tile-figure {
+  display: grid;
+  flex: 1;
+  min-height: 0;
+  place-items: center;
+  color: var(--line);
+}
+.tile.selected {
+  border-color: var(--exact);
+  box-shadow: inset 0 0 0 1px var(--exact);
+}
+.code-block {
+  margin: 4px 0 0;
+  padding: 8px;
+  max-height: 320px;
+  overflow: auto;
+  background: var(--canvas);
+  font-family: var(--font-code);
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

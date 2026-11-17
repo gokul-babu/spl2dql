@@ -1,0 +1,18 @@
+node_modules/
+dist/
+coverage/
+.turbo/
+*.tsbuildinfo
+playwright-report/
+test-results/
+.playwright-mcp/
+
+# secrets and local config — never commit
+.env
+.env.*
+!.env.example
+
+.DS_Store
+packages/cli/web/
+.playwright-mcp/
+apps/web/test-results/

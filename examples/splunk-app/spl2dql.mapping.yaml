@@ -1,0 +1,47 @@
+# A filled-in mapping for the sample app: where its data would live in Grail.
+# macros, extractions, eventtypes and tags are not here — spl2dql reads them from the .conf files.
+version: 1
+
+indexes:
+  web:
+    dataObject: logs
+    buckets: [web_logs]
+  firewall:
+    dataObject: logs
+    buckets: [firewall_logs]
+  legacy:
+    dataObject: logs
+
+sourcetypes:
+  access_combined:
+    filter: 'log.source == "/var/log/nginx/access.log"'
+  linux_secure:
+    filter: 'log.source == "/var/log/secure"'
+
+fields:
+  action: event.outcome
+  src_zone: source.zone
+  dest_zone: destination.zone
+
+fieldTypes:
+  status: number
+  bytes: number
+  duration_ms: number
+
+datamodels:
+  Authentication:
+    dataObject: logs
+    buckets: [auth_logs]
+    filter: 'event.category == "authentication"'
+    fields:
+      user: user.name
+      src: client.ip
+      action: event.outcome
+  Endpoint.Processes:
+    dataObject: logs
+    filter: 'event.type == "process"'
+    fields:
+      process_name: process.executable.name
+      process: process.command_line
+      dest: host.name
+      user: user.name

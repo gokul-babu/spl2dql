@@ -1,0 +1,29 @@
+name: Something else is broken
+description: The command-line tool, the web app, dashboards, the mapping file, the docs.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Issues here are public. Remove real names and values from anything you paste.
+        For a security problem use the private form instead (see the link on the previous page).
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what you expected
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to see it
+      description: The command you ran, or what you did in the web app. A small made-up input file helps.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version and where it runs
+      description: "`spl2dql --version`, Node version and operating system; or browser and version for the web app."
+    validations:
+      required: true

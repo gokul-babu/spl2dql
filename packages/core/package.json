@@ -1,0 +1,56 @@
+{
+  "name": "@spl2dql/core",
+  "version": "0.1.2",
+  "description": "Translate Splunk SPL searches to Dynatrace DQL queries and convert Splunk dashboards, offline: a deterministic library with no dependencies.",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "gokul-babu",
+    "url": "https://github.com/gokul-babu"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gokul-babu/spl2dql.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://spl2dql.pages.dev",
+  "bugs": {
+    "url": "https://github.com/gokul-babu/spl2dql/issues"
+  },
+  "keywords": [
+    "splunk",
+    "spl",
+    "dynatrace",
+    "dql",
+    "grail",
+    "migration",
+    "translator"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "NOTICE",
+    "!dist/**/*.map"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit -p .",
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  }
+}

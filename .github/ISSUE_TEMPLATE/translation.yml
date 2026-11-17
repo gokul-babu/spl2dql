@@ -1,0 +1,46 @@
+name: A search translates wrongly, or not at all
+description: The DQL is wrong, incomplete, or a command is not supported.
+labels: [translation]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Issues here are public. **Replace real index names, host names, IP addresses, user names and
+        any other value from your environment** with made-up ones before pasting. The shape of the
+        search is what matters.
+  - type: textarea
+    id: spl
+    attributes:
+      label: The Splunk search
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: dql
+    attributes:
+      label: What spl2dql produced
+      description: The DQL and the notes (codes such as SPL2002 help).
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      description: The DQL you would write by hand, or what the search should return. A link to Dynatrace's documentation helps most.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: "`spl2dql --version`, or the version in the web app's About dialog."
+    validations:
+      required: true
+  - type: checkboxes
+    id: clean
+    attributes:
+      label: Before you submit
+      options:
+        - label: I removed everything that comes from a real environment.
+          required: true

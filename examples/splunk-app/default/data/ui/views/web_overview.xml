@@ -1,0 +1,99 @@
+<form version="1.1">
+  <label>Web overview</label>
+  <description>Traffic, errors and slow pages for the web tier.</description>
+  <search id="base">
+    <query>`web_index` sourcetype=access_combined host=$host_tok$ | fields _time host status uri bytes</query>
+    <earliest>$time.earliest$</earliest>
+    <latest>$time.latest$</latest>
+  </search>
+  <fieldset submitButton="false">
+    <input type="time" token="time">
+      <label>Time</label>
+      <default><earliest>-24h@h</earliest><latest>now</latest></default>
+    </input>
+    <input type="dropdown" token="host_tok" searchWhenChanged="true">
+      <label>Host</label>
+      <choice value="*">All</choice>
+      <fieldForLabel>host</fieldForLabel>
+      <fieldForValue>host</fieldForValue>
+      <search><query>`web_index` | stats count by host</query><earliest>-24h</earliest></search>
+      <default>*</default>
+    </input>
+    <input type="multiselect" token="status_tok">
+      <label>Status</label>
+      <choice value="500">500</choice>
+      <choice value="502">502</choice>
+      <choice value="503">503</choice>
+      <valuePrefix>status="</valuePrefix>
+      <valueSuffix>"</valueSuffix>
+      <delimiter> OR </delimiter>
+      <default>500,502,503</default>
+    </input>
+    <input type="text" token="uri_tok">
+      <label>URI contains</label>
+      <default>*</default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <single>
+        <title>Requests</title>
+        <search base="base"><query>stats count</query></search>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Error rate %</title>
+        <search base="base"><query>stats count as total, count(eval(status&gt;=500)) as errors | eval pct=round(errors/total*100, 2) | fields pct</query></search>
+      </single>
+    </panel>
+    <panel>
+      <chart>
+        <title>Requests over time</title>
+        <search base="base"><query>timechart span=5m count by status</query></search>
+        <option name="charting.chart">line</option>
+        <drilldown><link target="_blank">search?q=status%3D$click.name2$</link></drilldown>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Top pages</title>
+      <chart>
+        <search base="base"><query>search uri="*$uri_tok$*" | top limit=10 uri</query></search>
+        <option name="charting.chart">bar</option>
+      </chart>
+    </panel>
+    <panel>
+      <table>
+        <title>Server errors</title>
+        <search>
+          <query>`web_index` ($status_tok$) host=$host_tok$ | stats count, latest(_time) as last_seen by host, status | sort - count</query>
+          <earliest>-4h@h</earliest>
+          <latest>now</latest>
+        </search>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>Session length</title>
+        <search><query>`web_index` | transaction JSESSIONID maxpause=5m | timechart avg(duration)</query></search>
+        <option name="charting.chart">area</option>
+      </chart>
+    </panel>
+    <panel>
+      <table>
+        <title>Slow requests</title>
+        <search ref="Web - slow requests"/>
+      </table>
+    </panel>
+    <panel>
+      <html>
+        <h3>Runbook</h3>
+        <p>Page <b>web-oncall</b> when the error rate stays above 5% for ten minutes. See <a href="https://wiki.example.com/web">the web runbook</a>.</p>
+      </html>
+    </panel>
+  </row>
+</form>

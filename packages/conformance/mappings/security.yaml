@@ -1,0 +1,18 @@
+version: 1
+
+# Mapping used by the data-model conformance cases.
+datamodels:
+  Authentication:
+    dataObject: logs
+    buckets: [auth_logs]
+    filter: 'event.category == "authentication"'
+    fields:
+      user: user.name
+      src: client.ip
+      action: event.outcome
+  Endpoint.Processes:
+    dataObject: logs
+    filter: 'event.type == "process"'
+    fields:
+      process_name: process.executable.name
+      dest: host.name

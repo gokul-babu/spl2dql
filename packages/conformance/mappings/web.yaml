@@ -1,0 +1,70 @@
+# Shared mapping for the conformance corpus. Field names are illustrative, not a recommendation.
+version: 1
+defaults:
+  dataObject: logs
+  timezone: UTC
+indexes:
+  web:
+    dataObject: logs
+    buckets: [web_logs]
+  app:
+    buckets: [app_logs]
+  security:
+    dataObject: events
+  "fw_*":
+    buckets: [firewall_logs]
+sourcetypes:
+  access_combined:
+    filter: 'log.source == "/var/log/nginx/access.log"'
+fields:
+  level: loglevel
+  status: http.status
+  bytes: http.bytes
+  clientip: client.ip
+  user: user.name
+  uri: url.path
+  method: http.method
+  duration: duration
+  session: session
+  code: code
+  owner: owner
+  amount: amount
+fieldTypes:
+  http.status: number
+  http.bytes: number
+  duration: number
+  amount: number
+  loglevel: string
+  user.name: string
+  url.path: string
+  http.method: string
+  client.ip: ip
+extractions:
+  response_time:
+    from: content
+    dpl: "DATA? 'response_time=' DOUBLE:response_time"
+macros:
+  errors_only:
+    definition: "level=ERROR"
+  recent(1):
+    args: [span]
+    definition: "earliest=-$span$"
+  count_by(1):
+    args: [f]
+    definition: "stats count by $f$"
+  loop:
+    definition: "`loop`"
+lookups:
+  http_status:
+    path: /lookups/http_status
+    key: code
+    columns: [code, description]
+  assets:
+    path: /lookups/assets
+    key: host
+eventtypes:
+  failed_login: 'event.type == "auth" and outcome == "failure"'
+tags:
+  web: 'dt.system.bucket == "web_logs"'
+metrics:
+  cpu.pct: dt.host.cpu.usage

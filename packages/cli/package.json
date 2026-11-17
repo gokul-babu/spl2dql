@@ -1,0 +1,73 @@
+{
+  "name": "spl2dql",
+  "version": "0.1.2",
+  "description": "Move a Splunk app to Dynatrace: SPL searches to DQL queries, dashboards to Dynatrace dashboards — offline, from the terminal.",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "gokul-babu",
+    "url": "https://github.com/gokul-babu"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gokul-babu/spl2dql.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://spl2dql.pages.dev",
+  "bugs": {
+    "url": "https://github.com/gokul-babu/spl2dql/issues"
+  },
+  "keywords": [
+    "splunk",
+    "spl",
+    "dynatrace",
+    "dql",
+    "grail",
+    "migration",
+    "translator",
+    "dashboard",
+    "savedsearches",
+    "cli"
+  ],
+  "type": "module",
+  "bin": {
+    "spl2dql": "./bin/spl2dql.js"
+  },
+  "exports": {
+    ".": {
+      "source": "./src/main.ts",
+      "default": "./dist/main.js"
+    }
+  },
+  "files": [
+    "bin",
+    "dist",
+    "web",
+    "LICENSE",
+    "NOTICE",
+    "!dist/**/*.map"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p .",
+    "build": "tsc -p tsconfig.build.json && node ../../scripts/copy-web.ts",
+    "dev": "node --conditions=source src/main.ts"
+  },
+  "dependencies": {
+    "@spl2dql/core": "workspace:*",
+    "commander": "^15.1.0",
+    "yaml": "^2.9.0"
+  },
+  "devDependencies": {
+    "@spl2dql/web": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "default": "./dist/main.js"
+      }
+    }
+  }
+}

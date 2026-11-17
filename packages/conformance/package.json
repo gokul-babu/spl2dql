@@ -1,0 +1,17 @@
+{
+  "name": "@spl2dql/conformance",
+  "version": "0.1.2",
+  "private": true,
+  "description": "SPL → DQL conformance corpus: the definition of correct translation (data only).",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p ."
+  }
+}

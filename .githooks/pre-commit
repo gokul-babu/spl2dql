@@ -1,0 +1,15 @@
+#!/bin/sh
+# Stops a commit that contains something that looks like a credential, and unformatted code.
+# Switch it on once per clone:  git config core.hooksPath .githooks
+set -e
+
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks git --pre-commit --staged --redact --no-banner
+else
+  echo "pre-commit: gitleaks is not installed, so the secret scan was skipped." >&2
+  echo "            Install it (https://github.com/gitleaks/gitleaks) — CI runs the same scan." >&2
+fi
+
+if command -v pnpm >/dev/null 2>&1 && [ -d node_modules ]; then
+  pnpm exec biome check --staged --no-errors-on-unmatched
+fi

@@ -1,0 +1,18 @@
+spl2dql
+Copyright 2026 the spl2dql contributors
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+It includes, under third_party/dynatrace-for-ai/, files from Dynatrace/dynatrace-for-ai
+(https://github.com/Dynatrace/dynatrace-for-ai), Copyright Dynatrace LLC, licensed under the
+Apache License, Version 2.0 (see third_party/dynatrace-for-ai/LICENSE). Those files are used at
+build time to generate packages/core/src/dql/catalog.generated.ts, and as the reference for the
+Dynatrace dashboard format (third_party/dynatrace-for-ai/dashboards/).
+
+The web app that ships with the command-line tool and as the hosted page bundles third-party
+libraries and fonts. Their licences are listed in THIRD-PARTY-NOTICES.txt, which is generated when
+the app is built and travels with it.
+
+This project is independent. It is not affiliated with, endorsed by or supported by Splunk Inc.,
+Cisco or Dynatrace. Splunk, SPL, Dynatrace and DQL are trademarks of their respective owners and
+are used only to describe what this tool works with.

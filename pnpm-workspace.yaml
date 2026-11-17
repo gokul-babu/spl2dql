@@ -1,0 +1,12 @@
+packages:
+  - packages/*
+  - apps/*
+
+# Supply-chain hardening
+# Refuse versions published less than 7 days ago (protects against hijacked fresh releases).
+minimumReleaseAge: 10080
+# No dependency may run install scripts unless listed here.
+onlyBuiltDependencies: []
+strictDepBuilds: true
+# Exact versions in package.json are not required, but the lockfile is committed and CI installs frozen.
+savePrefix: "^"

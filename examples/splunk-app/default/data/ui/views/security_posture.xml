@@ -1,0 +1,250 @@
+<dashboard version="2" theme="light">
+  <label>Security posture</label>
+  <description>Failed sign-ins and blocked traffic.</description>
+  <definition><![CDATA[
+{
+  "title": "Security posture",
+  "description": "Failed sign-ins and blocked traffic.",
+  "visualizations": {
+    "viz_intro": {
+      "type": "splunk.markdown",
+      "options": {
+        "markdown": "## Authentication\nFailed sign-ins by user and source, from the Authentication data model."
+      }
+    },
+    "viz_total": {
+      "type": "splunk.singlevalue",
+      "title": "Failed sign-ins",
+      "dataSources": {
+        "primary": "ds_total"
+      }
+    },
+    "viz_trend": {
+      "type": "splunk.area",
+      "title": "Failures over time",
+      "dataSources": {
+        "primary": "ds_trend"
+      }
+    },
+    "viz_sources": {
+      "type": "splunk.table",
+      "title": "Top sources",
+      "dataSources": {
+        "primary": "ds_sources"
+      },
+      "eventHandlers": [
+        {
+          "type": "drilldown.setToken",
+          "options": {
+            "tokens": [
+              {
+                "token": "src",
+                "key": "row.src.value"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "viz_actions": {
+      "type": "splunk.pie",
+      "title": "Firewall actions",
+      "dataSources": {
+        "primary": "ds_actions"
+      }
+    },
+    "viz_logo": {
+      "type": "splunk.image",
+      "options": {
+        "src": "/static/app/sample/logo.png"
+      }
+    },
+    "viz_flows": {
+      "type": "splunk.sankey",
+      "title": "Zone to zone",
+      "dataSources": {
+        "primary": "ds_flows"
+      }
+    }
+  },
+  "dataSources": {
+    "ds_base": {
+      "type": "ds.search",
+      "name": "Authentication failures",
+      "options": {
+        "query": "| tstats count from datamodel=Authentication where Authentication.action=failure Authentication.user=$user$ by _time span=1h Authentication.user Authentication.src"
+      }
+    },
+    "ds_total": {
+      "type": "ds.chain",
+      "options": {
+        "extend": "ds_base",
+        "query": "| stats sum(count) as failures"
+      }
+    },
+    "ds_trend": {
+      "type": "ds.chain",
+      "options": {
+        "extend": "ds_base",
+        "query": "| timechart span=1h sum(count) as failures"
+      }
+    },
+    "ds_sources": {
+      "type": "ds.chain",
+      "options": {
+        "extend": "ds_base",
+        "query": "| stats sum(count) as failures by Authentication.src | sort - failures | head $top_n$"
+      }
+    },
+    "ds_actions": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=firewall action=* | stats count by action",
+        "queryParameters": {
+          "earliest": "-60m@m",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_flows": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=firewall action=blocked | stats count by src_zone dest_zone"
+      }
+    },
+    "ds_users": {
+      "type": "ds.search",
+      "options": {
+        "query": "| tstats count from datamodel=Authentication by Authentication.user | rename Authentication.user as value | fields value"
+      }
+    }
+  },
+  "defaults": {
+    "dataSources": {
+      "ds.search": {
+        "options": {
+          "queryParameters": {
+            "earliest": "$global_time.earliest$",
+            "latest": "$global_time.latest$"
+          }
+        }
+      }
+    }
+  },
+  "inputs": {
+    "input_time": {
+      "type": "input.timerange",
+      "title": "Time range",
+      "options": {
+        "token": "global_time",
+        "defaultValue": "-24h@h,now"
+      }
+    },
+    "input_user": {
+      "type": "input.dropdown",
+      "title": "User",
+      "options": {
+        "token": "user",
+        "items": ">frame(label, value) | prepend(formattedStatics) | objects()",
+        "defaultValue": "*"
+      },
+      "dataSources": {
+        "primary": "ds_users"
+      }
+    },
+    "input_top": {
+      "type": "input.number",
+      "title": "Rows",
+      "options": {
+        "token": "top_n",
+        "defaultValue": "10"
+      }
+    }
+  },
+  "layout": {
+    "type": "absolute",
+    "options": {
+      "width": 1440,
+      "height": 900
+    },
+    "structure": [
+      {
+        "item": "viz_logo",
+        "type": "block",
+        "position": {
+          "x": 1300,
+          "y": 10,
+          "w": 120,
+          "h": 60
+        }
+      },
+      {
+        "item": "viz_intro",
+        "type": "block",
+        "position": {
+          "x": 20,
+          "y": 10,
+          "w": 1000,
+          "h": 90
+        }
+      },
+      {
+        "item": "viz_total",
+        "type": "block",
+        "position": {
+          "x": 20,
+          "y": 110,
+          "w": 340,
+          "h": 300
+        }
+      },
+      {
+        "item": "viz_trend",
+        "type": "block",
+        "position": {
+          "x": 380,
+          "y": 110,
+          "w": 1040,
+          "h": 300
+        }
+      },
+      {
+        "item": "viz_sources",
+        "type": "block",
+        "position": {
+          "x": 20,
+          "y": 430,
+          "w": 700,
+          "h": 400
+        }
+      },
+      {
+        "item": "viz_actions",
+        "type": "block",
+        "position": {
+          "x": 740,
+          "y": 430,
+          "w": 340,
+          "h": 400
+        }
+      },
+      {
+        "item": "viz_flows",
+        "type": "block",
+        "position": {
+          "x": 1100,
+          "y": 430,
+          "w": 320,
+          "h": 400
+        }
+      }
+    ],
+    "globalInputs": [
+      "input_time",
+      "input_user",
+      "input_top"
+    ]
+  }
+}
+  ]]></definition>
+</dashboard>

@@ -1,0 +1,14 @@
+# Secret scanning for commits and CI. The default rules, plus the paths that hold licence texts
+# and vendored reference files (long hashes and example values, never credentials).
+title = "spl2dql"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Vendored reference and generated files"
+paths = [
+  '''^third_party/''',
+  '''^pnpm-lock\.yaml$''',
+  '''^packages/core/src/dql/catalog\.generated\.ts$''',
+]

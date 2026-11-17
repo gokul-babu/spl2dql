@@ -1,0 +1,35 @@
+{
+  "name": "spl2dql-monorepo",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.18.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm boundaries",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "pnpm --filter @spl2dql/web test:e2e",
+    "build": "pnpm -r --if-present build",
+    "dev": "pnpm --filter @spl2dql/web dev",
+    "boundaries": "node scripts/check-boundaries.ts && node scripts/scan-network.ts && node scripts/check-tree.ts",
+    "gen:catalog": "node scripts/gen-dql-catalog.ts",
+    "gate": "node scripts/launch-gate.ts",
+    "check:packages": "node scripts/check-packages.ts"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.0",
+    "@spl2dql/conformance": "workspace:*",
+    "@spl2dql/core": "workspace:*",
+    "@types/node": "^26.0.0",
+    "@vitest/coverage-v8": "^5.0.0",
+    "fast-check": "^4.10.0",
+    "typescript": "^7.0.0",
+    "vitest": "^5.0.0",
+    "yaml": "^2.9.0"
+  }
+}

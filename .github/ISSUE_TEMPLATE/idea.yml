@@ -1,0 +1,21 @@
+name: An idea
+description: A Splunk command, a dashboard feature or a workflow you would like supported.
+labels: [idea]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Two things are out of scope for good and will be closed: connecting to a Dynatrace tenant,
+        and AI of any kind. The tool stays offline and deterministic.
+  - type: textarea
+    id: what
+    attributes:
+      label: What you would like to do
+      description: Describe the migration task, with a made-up example of the Splunk side.
+    validations:
+      required: true
+  - type: textarea
+    id: dql
+    attributes:
+      label: What the Dynatrace side should look like
+      description: If you know it. A link to Dynatrace's documentation is ideal.

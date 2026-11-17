@@ -1,0 +1,7 @@
+# One line ending everywhere: the conformance cases compare text byte for byte.
+* text=auto eol=lf
+*.png binary
+*.woff2 binary
+pnpm-lock.yaml linguist-generated
+packages/core/src/dql/catalog.generated.ts linguist-generated
+third_party/** linguist-vendored
