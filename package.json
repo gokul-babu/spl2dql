@@ -22,7 +22,7 @@
     "check:packages": "node scripts/check-packages.ts"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.6.0",
+    "@biomejs/biome": "^2.6.8",
     "@spl2dql/conformance": "workspace:*",
     "@spl2dql/core": "workspace:*",
     "@types/node": "^26.0.0",
